@@ -1,0 +1,59 @@
+﻿@model List<ExamRegistrationAspMvc.Models.Student>
+@{
+    ViewBag.Title = "Index";
+}
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<link href="~/content/themes/base/jquery-ui.css" rel="stylesheet" />
+
+<h2>Students</h2>
+
+<table id="subjects" class="table table-striped table-bordered">
+    <tr>
+        <th>Number</th>
+        <th>FirstName</th>
+        <th>LastName</th>
+        <th>ClassNo</th>
+        <th></th>
+    </tr>
+    @foreach (var student in Model)
+    {
+        <tr>
+            <td>@student.Number</td>
+            <td>@student.FirstName</td>
+            <td>@student.LastName</td>
+            <td>@student.ClassNo</td>
+            <td>
+                <a class="btn btn-warning" onclick="PopupForm('@Url.Action("Edit","Students")/@student.Number')">Edit <i class='fa fa-pencil'></i></a>
+                <a class="btn btn-danger" href='@Url.Action("Delete","Students")/@student.Number'>Delete <i class='fa fa-trash'></i></a>
+            </td>
+        </tr>
+    }
+</table>
+
+<a class="btn btn-success" onclick="PopupForm('@Url.Action("Add","Students")')"> Add New <i class="fa fa-plus"></i></a>
+
+
+
+<script>
+    function PopupForm(url) {
+        var formDiv = $('<div/>');
+        $.get(url)
+            .done(function (response) {
+                formDiv.html(response);
+
+                Popup = formDiv.dialog({
+                    autoOpen: true,
+                    resizable: false,
+                    title: 'Fill Details',
+                    height: 550,
+                    width: 300,
+                    close: function () {
+                        Popup.dialog('destroy').remove();
+                    }
+
+                });
+            });
+    }
+
+</script>

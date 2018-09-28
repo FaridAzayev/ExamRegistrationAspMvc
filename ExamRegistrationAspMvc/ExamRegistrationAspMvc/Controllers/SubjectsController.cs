@@ -5,28 +5,25 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using ExamRegistrationAspMvc.Extensions;
+using ExamRegistrationAspMvc.Repository;
 
 namespace ExamRegistrationAspMvc.Controllers
 {
     public class SubjectsController : Controller
     {
-        //private static List<Subject> _subjects = new List<Subject>();
-
-        private static List<Subject> _subjects = new List<Subject>(new Subject[] {
-            new Subject() { ClassNo = 1, Code = "test", Name = "testName" , TeacherFirstName= "Tname", TeacherLastName = "Tsurname"}
-            , new Subject() { ClassNo = 2, Code = "test2", Name = "testName2" , TeacherFirstName= "Tname2", TeacherLastName = "Tsurname2"}
-        });
+        private static DaoService daoService = new DaoService();
+        private static List<Subject> _subjects = new List<Subject>();
 
         private Subject FindOneByCode(string code)
         {
-            return _subjects.Where(s => s.Code.Equals(code)).FirstOrDefault();
+            return daoService.GetSubjects().Where(s => s.Code.Trim().Equals(code)).FirstOrDefault();
         }
 
         [Route("Subjects")]
         [Route("Subjects/Index")]
         public ActionResult Index()
         {
-            return View(_subjects);
+            return View(daoService.GetSubjects());
         }
 
         [Route("Subjects/Get")]
@@ -53,8 +50,7 @@ namespace ExamRegistrationAspMvc.Controllers
         [Route("Subjects/Edit/{subject}")]
         public ActionResult Edit(Subject model)
         {
-            //todo: update database
-            FindOneByCode(model.Code).Copy(model);
+            daoService.UpdateSubject(model);
             return RedirectToAction("Index", "Subjects");
         }
 
@@ -70,15 +66,14 @@ namespace ExamRegistrationAspMvc.Controllers
         [Route("Subjects/Add")]
         public ActionResult Add(Subject model)
         {
-            _subjects.Add(model);
+            daoService.InsertSubject(model);
             return RedirectToAction("Index", "Subjects");
         }
 
         [Route("Subjects/Delete/{code}")]
         public ActionResult Delete(string code)
         {
-            //todo: delete in database
-            _subjects.Remove(FindOneByCode(code));
+            daoService.DeleteSubject(code);
             return RedirectToAction("Index","Subjects");
         }
     }
